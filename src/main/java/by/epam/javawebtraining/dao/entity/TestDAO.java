@@ -1,6 +1,6 @@
 package by.epam.javawebtraining.dao.entity;
 
-import by.epam.javawebtraining.bean.Entity;
+
 import by.epam.javawebtraining.bean.Test;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TestDAO extends AbstractDAO<Test> {
@@ -22,6 +21,8 @@ public class TestDAO extends AbstractDAO<Test> {
     public static final String SELECT_TEST =
             "SELECT `id`, `author`, `test_theme`, `test_name` FROM " +
                     "testingproject.test ";
+    public static final String FIND_TEST_BY_ID =
+            SELECT_TEST + "WHERE `id` = ?;";
     public static final String FIND_TEST_BY_NAME =
             SELECT_TEST + "WHERE `test_name` = ?;";
     public static final String SELECT_TESTS =
@@ -30,18 +31,17 @@ public class TestDAO extends AbstractDAO<Test> {
     public TestDAO() {
     }
 
-
-   /* public User getUserByLogin(String login) {
+    public Test getTestByID(String id) {
         PreparedStatement preparedStatement = null;
-        User user = null;
-        if (login != null) {
+        Test test = null;
+        if (id != null) {
             try {
-                preparedStatement = connection.prepareStatement(FIND_USER_BY_LOGIN);
-                preparedStatement.setString(1, login);
+                preparedStatement = connection.prepareStatement(FIND_TEST_BY_NAME);
+                preparedStatement.setString(1, id);
 
                 ResultSet resultSet;
                 resultSet = preparedStatement.executeQuery();
-                user = toEntity(resultSet).get(0);
+                test = toEntity(resultSet).get(0);
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -50,8 +50,30 @@ public class TestDAO extends AbstractDAO<Test> {
             }
         }
 
-        return user;
-    }*/
+        return test;
+    }
+
+    public Test getTestByName(String testName) {
+        PreparedStatement preparedStatement = null;
+        Test test = null;
+        if (testName != null) {
+            try {
+                preparedStatement = connection.prepareStatement(FIND_TEST_BY_NAME);
+                preparedStatement.setString(1, testName);
+
+                ResultSet resultSet;
+                resultSet = preparedStatement.executeQuery();
+                test = toEntity(resultSet).get(0);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closeStatement(preparedStatement);
+            }
+        }
+
+        return test;
+    }
 
 
     public List<Test> getAllTests() {
@@ -67,118 +89,56 @@ public class TestDAO extends AbstractDAO<Test> {
         return tests;
     }
 
+    @Override
+    protected Test toEntityBody(ResultSet resultSet) throws SQLException {
 
-    private List<Test> toEntity(ResultSet resultSet) {
-        List<Test> tests = new ArrayList<>();
-        if (resultSet != null) {
-            try {
-                while (resultSet.next()) {
-                    Test test = new Test();
+        Test test = new Test();
 
-                    test.setId(resultSet.getInt("id"));
+        test.setId(resultSet.getInt("id"));
 
-                    FactoryDAO factoryDAO = FactoryDAO.getInstance();
-                    UserDAO userDAO = factoryDAO.getUserDAO();
-                    String userID = resultSet.getString("user_id");
-                    User user = userDAO.getUserByID(userID);
+        FactoryDAO factoryDAO = FactoryDAO.getInstance();
+        UserDAO userDAO = factoryDAO.getUserDAO();
+        String userID = resultSet.getString("user_id");
+        User user = userDAO.getUserByID(userID);
+        test.setAuthor(user);
 
-                    test.setAuthor(user);
-                    test.setTestTheme(resultSet.getString("test_theme"));
-                    test.setTestName(resultSet.getString("test_name"));
+        test.setTestTheme(resultSet.getString("test_theme"));
+        test.setTestName(resultSet.getString("test_name"));
 
-
-                    tests.add(test);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return tests;
+        return test;
     }
 
     @Override
     public void createBody(Test tEntity, PreparedStatement preparedStatement) throws SQLException {
-
+        preparedStatement = connection.prepareStatement(ADD_TEST);
+        makePrSTMT(tEntity, preparedStatement);
     }
 
     @Override
     public void updateBody(Test tEntity, PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement = connection.prepareStatement(UPDATE_TEST);
+        makePrSTMT(tEntity, preparedStatement);
+    }
 
+    private void makePrSTMT(Test tEntity, PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.setInt(1, tEntity.getAuthor().getId());
+        preparedStatement.setString(2, tEntity.getTestTheme());
+        preparedStatement.setString(3, tEntity.getTestName());
+
+        preparedStatement.executeUpdate();
     }
 
     @Override
     public void deleteBody(Test tEntity, PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement = connection.prepareStatement(DELETE_TEST);
+        preparedStatement.setInt(1, tEntity.getId());
 
+        preparedStatement.executeUpdate();
     }
 
-    /*
-    @Override
-    public boolean create(Entity entity) {
-        PreparedStatement preparedStatement = null;
-        if (entity instanceof Test) {
-            Test test = (Test) entity;
-            try {
-                preparedStatement = connection.prepareStatement(ADD_TEST);
-                preparedStatement.setInt(1, test.getAuthor().getId());
-                preparedStatement.setString(2, test.getTestTheme());
-                preparedStatement.setString(3, test.getTestName());
 
-                preparedStatement.executeUpdate();
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closeStatement(preparedStatement);
-            }
-            return true;
-        }
 
-        return false;
-    }
 
-    @Override
-    public boolean update(Entity entity) {
-        PreparedStatement preparedStatement = null;
-        if (entity instanceof Test) {
-            Test test = (Test) entity;
-            try {
 
-                preparedStatement = connection.prepareStatement(UPDATE_TEST);
-
-                preparedStatement.setInt(1, test.getAuthor().getId());
-                preparedStatement.setString(2, test.getTestTheme());
-                preparedStatement.setString(3, test.getTestName());
-
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closeStatement(preparedStatement);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean delete(Entity entity) {
-        PreparedStatement preparedStatement = null;
-        if (entity instanceof Test) {
-            Test test = (Test) entity;
-            try {
-                preparedStatement = connection.prepareStatement(DELETE_TEST);
-                preparedStatement.setInt(1, test.getId());
-
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closeStatement(preparedStatement);
-            }
-
-            return true;
-        }
-        return false;
-    }*/
 }

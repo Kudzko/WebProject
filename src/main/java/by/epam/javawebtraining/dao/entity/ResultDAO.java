@@ -15,18 +15,5 @@ public class ResultDAO  extends AbstractDAO<Result> {
         super();
     }
 
-    @Override
-    public void createBody(Result tEntity, PreparedStatement preparedStatement) throws SQLException {
-
-    }
-
-    @Override
-    public void updateBody(Result tEntity, PreparedStatement preparedStatement) throws SQLException {
-
-    }
-
-    @Override
-    public void deleteBody(Result tEntity, PreparedStatement preparedStatement) throws SQLException {
-
-    }
+   
 }

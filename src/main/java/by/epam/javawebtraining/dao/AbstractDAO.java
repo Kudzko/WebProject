@@ -1,9 +1,5 @@
 package by.epam.javawebtraining.dao;
 
-import by.epam.javawebtraining.bean.Entity;
-import by.epam.javawebtraining.bean.Role;
-import by.epam.javawebtraining.bean.User;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +18,7 @@ public abstract class AbstractDAO<T> implements IAbstractDAO<T> {
     public abstract void deleteBody(T tEntity, PreparedStatement preparedStatement) throws SQLException;
 
     protected abstract T toEntityBody(ResultSet resultSet) throws SQLException;
+
 
 
     public void closeStatement(Statement statement) {
@@ -97,6 +94,7 @@ public abstract class AbstractDAO<T> implements IAbstractDAO<T> {
         return true;
 
     }
+
 
     protected List<T> toEntity(ResultSet resultSet) {
         List<T> tEntities = new ArrayList<>();

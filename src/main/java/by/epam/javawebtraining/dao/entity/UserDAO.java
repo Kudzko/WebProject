@@ -1,17 +1,15 @@
 package by.epam.javawebtraining.dao.entity;
 
-import by.epam.javawebtraining.bean.Entity;
 import by.epam.javawebtraining.bean.Role;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
 
 
-import javax.jws.soap.SOAPBinding;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO extends AbstractDAO<User> {
@@ -32,6 +30,8 @@ public class UserDAO extends AbstractDAO<User> {
 
     public UserDAO() {
     }
+
+
 
     public User getUserByID(String id) {
         PreparedStatement preparedStatement = null;
@@ -111,25 +111,22 @@ public class UserDAO extends AbstractDAO<User> {
     public void createBody(User user, PreparedStatement preparedStatement)
             throws SQLException {
         preparedStatement = connection.prepareStatement(ADD_USER);
-        preparedStatement.setString(1, user.getLogin());
-        preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setInt(3, user.getRole().ordinal() + 1);
-        preparedStatement.setString(4, user.getName());
-        preparedStatement.setString(5, user.getSurname());
-
-        preparedStatement.executeUpdate();
+        makePrSTMT(user, preparedStatement);
     }
 
     @Override
     public void updateBody(User user, PreparedStatement preparedStatement)
             throws SQLException {
         preparedStatement = connection.prepareStatement(UPDATE_USER);
+        makePrSTMT(user, preparedStatement);
+    }
+
+    private void makePrSTMT(User user, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, user.getLogin());
         preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setInt(3, user.getRole().ordinal());
-        preparedStatement.setString(4, user.getSurname());
+        preparedStatement.setInt(3, user.getRole().ordinal() + 1);
+        preparedStatement.setString(4, user.getName());
         preparedStatement.setString(5, user.getSurname());
-        preparedStatement.setInt(6, user.getId());
 
         preparedStatement.executeUpdate();
     }
