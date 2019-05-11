@@ -3,7 +3,7 @@ package by.epam.javawebtraining.dao.entity;
 import by.epam.javawebtraining.bean.Role;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
-
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
 
 
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public class UserDAO extends AbstractDAO<User> {
+public class UserDAO extends AbstractDAO <User, Integer>{
     public static final String ADD_USER =
             "INSERT INTO `testingproject`.`user` (`login`, `password`, `role_id`, `name`, `surname`) VALUES (?, ?, ?, ?, ?);";
     public static final String UPDATE_USER =
@@ -20,7 +20,8 @@ public class UserDAO extends AbstractDAO<User> {
     public static final String DELETE_USER =
             "DELETE FROM `testingproject`.`user` WHERE `id`=?;";
     public static final String SELECT =
-            "SELECT `ìd`, `login`, `password`, `role_id`, `name`, `surname` FROM testingproject.user ";
+            "SELECT `id`, `login`, `password`, `role_id`, `name`, `surname` " +
+                    "FROM testingproject.user ";
     public static final String FIND_USER_BY_LOGIN =
             SELECT + "WHERE `login` = ?;";
     public static final String FIND_USER_BY_ID =
@@ -33,28 +34,75 @@ public class UserDAO extends AbstractDAO<User> {
 
 
 
-    public User getUserByID(String id) {
-        PreparedStatement preparedStatement = null;
-        User user = null;
-        if (id != null) {
-            try {
-                preparedStatement = connection.prepareStatement
-                        (FIND_USER_BY_ID);
-                preparedStatement.setString(1, id);
+    @Override
+    public String getCreateQuery() {
+        return ADD_USER;
+    }
 
-                ResultSet resultSet;
-                resultSet = preparedStatement.executeQuery();
-                user = toEntity(resultSet).get(0);
+    @Override
+    public String getUpdateQuery() {
+        return UPDATE_USER;
+    }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closeStatement(preparedStatement);
-            }
-        }
+    @Override
+    public String getDeleteQuery() {
+        return DELETE_USER;
+    }
+
+        @Override
+    public String getSelectAllQuery() {
+        return SELECT_USERS ;
+    }
+
+    @Override
+    public String getSelectAllQueryWhere() {
+        return SELECT + "WHERE `id` = LAST_INSERT_ID();";
+    }
+
+    @Override
+    public String getSelectQueryByID() {
+        return FIND_USER_BY_ID;
+    }
+
+    @Override
+    public List<User> parseResultSet(ResultSet resultSet) {
+        return toEntity(resultSet);
+    }
+
+    @Override
+    public void prepareStatementForInsert(User entity, PreparedStatement preparedStatement) throws SQLException {
+        makePrStmtForEntity( entity,  preparedStatement);
+    }
+
+    @Override
+    public void prepareStatementForUpdate(User entity, PreparedStatement preparedStatement) throws SQLException {
+        makePrStmtForEntity( entity,  preparedStatement);
+        preparedStatement.setInt(6, entity.getId());
+    }
+
+    @Override
+    protected void makePrStmtForEntity(User entity, PreparedStatement prpStmt) throws SQLException {
+        prpStmt.setString(1, entity.getLogin());
+        prpStmt.setString(2, entity.getPassword());
+        prpStmt.setInt(3, entity.getRole().ordinal() + 1);
+        prpStmt.setString(4, entity.getName());
+        prpStmt.setString(5, entity.getSurname());
+    }
+
+    @Override
+    protected User toEntityBody(ResultSet resultSet) throws SQLException {
+        User user = new User();
+
+        user.setId(resultSet.getInt("id"));
+        user.setLogin(resultSet.getString("login"));
+        user.setPassword(resultSet.getString("password"));
+        user.setName(resultSet.getString("name"));
+        user.setSurname(resultSet.getString("surname"));
+        user.setRole(Role.values()[resultSet.getInt("role_id")]);
 
         return user;
     }
+
 
     public User getUserByLogin(String login) {
         PreparedStatement preparedStatement = null;
@@ -76,67 +124,5 @@ public class UserDAO extends AbstractDAO<User> {
         }
 
         return user;
-    }
-
-
-    public List<User> getAllUsers() {
-        Statement stmt = null;
-        List<User> users = null;
-        try {
-            stmt = connection.createStatement();
-            ResultSet resultSet = stmt.executeQuery(SELECT_USERS);
-            users = toEntity(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
-
-    @Override
-    protected User toEntityBody(ResultSet resultSet) throws SQLException {
-        User user = new User();
-
-        user.setId(resultSet.getInt("id"));
-        user.setLogin(resultSet.getString("login"));
-        user.setPassword(resultSet.getString("password"));
-        user.setName(resultSet.getString("name"));
-        user.setSurname(resultSet.getString("surname"));
-        user.setRole(Role.values()[resultSet.getInt("role_id")]);
-
-        return user;
-    }
-
-    @Override
-    public void createBody(User user, PreparedStatement preparedStatement)
-            throws SQLException {
-        preparedStatement = connection.prepareStatement(ADD_USER);
-        makePrSTMT(user, preparedStatement);
-    }
-
-    @Override
-    public void updateBody(User user, PreparedStatement preparedStatement)
-            throws SQLException {
-        preparedStatement = connection.prepareStatement(UPDATE_USER);
-        makePrSTMT(user, preparedStatement);
-    }
-
-    private void makePrSTMT(User user, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.setString(1, user.getLogin());
-        preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setInt(3, user.getRole().ordinal() + 1);
-        preparedStatement.setString(4, user.getName());
-        preparedStatement.setString(5, user.getSurname());
-
-        preparedStatement.executeUpdate();
-    }
-
-    @Override
-    public void deleteBody(User user, PreparedStatement preparedStatement)
-            throws SQLException {
-        preparedStatement = connection.prepareStatement(DELETE_USER);
-        preparedStatement.setInt(1, user.getId());
-
-        preparedStatement.executeUpdate();
     }
 }

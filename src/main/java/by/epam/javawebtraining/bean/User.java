@@ -1,8 +1,12 @@
 package by.epam.javawebtraining.bean;
 
+
+
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
+
 import java.util.Objects;
 
-public class User extends Entity{
+public class User extends Entity implements IDdefinition {
     private String name;
     private String surname;
     private Role role;
@@ -30,8 +34,9 @@ public class User extends Entity{
         this.password = password;
     }
 
+    @Override
     public int getId() {
-        return id;
+        return super.getId();
     }
 
     public void setId(int id) {

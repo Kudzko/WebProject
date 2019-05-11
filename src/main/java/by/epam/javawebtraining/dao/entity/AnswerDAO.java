@@ -7,23 +7,10 @@ import by.epam.javawebtraining.dao.AbstractDAO;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AnswerDAO extends AbstractDAO<Answer> {
+public class AnswerDAO /*extends AbstractDAO<Answer>*/ {
 
     public AnswerDAO() {
     }
 
-    @Override
-    public void createBody(Answer tEntity, PreparedStatement preparedStatement) throws SQLException {
 
-    }
-
-    @Override
-    public void updateBody(Answer tEntity, PreparedStatement preparedStatement) throws SQLException {
-
-    }
-
-    @Override
-    public void deleteBody(Answer tEntity, PreparedStatement preparedStatement) throws SQLException {
-
-    }
 }

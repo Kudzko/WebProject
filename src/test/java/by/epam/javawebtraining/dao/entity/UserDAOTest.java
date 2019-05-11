@@ -4,6 +4,8 @@ package by.epam.javawebtraining.dao.entity;
 import by.epam.javawebtraining.bean.Role;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.ConnectionPool;
+import by.epam.javawebtraining.dao.FactoryDAO;
+import by.epam.javawebtraining.dao.exception.DAOException;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -39,7 +41,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void tst_create() {
+    public void tst_create() throws DAOException {
         String name = "Петр";
         String surname = "Петров";
         String login = "petrov";
@@ -47,11 +49,12 @@ public class UserDAOTest {
 
         User tst_user = new User(name, surname, Role.TUTOR, login, password);
         FactoryDAO factoryDAO = FactoryDAO.getInstance();
-        UserDAO userDAO = factoryDAO.getUserDAO();
+        UserDAO userDAO =(UserDAO) factoryDAO.getDAO(UserDAO.class);
         userDAO.setConnection(connection);
-        userDAO.create(tst_user);
+        tst_user = userDAO.persist(tst_user);
 
-        String testSQL = "SELECT `login`, `password`, `role_id`, `name`, " +
+        String testSQL = "SELECT `id`, `login`, `password`, `role_id`, " +
+                "`name`, " +
                 "`surname` FROM `testingproject`.`user` WHERE " +
                 "login = '"+ login +"'  AND password = '"+ password+ "' AND " +
                 "role_id =" +
@@ -65,6 +68,7 @@ public class UserDAOTest {
 
             while (resultSet.next()) {
 
+                user.setId(resultSet.getInt("id"));
                 user.setLogin(resultSet.getString("login"));
                 user.setPassword(resultSet.getString("password"));
                 user.setName(resultSet.getString("name"));

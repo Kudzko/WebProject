@@ -1,24 +1,110 @@
 package by.epam.javawebtraining.dao;
 
+import by.epam.javawebtraining.bean.Entity;
+import by.epam.javawebtraining.dao.daointerface.IAbstractDAO;
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
+import by.epam.javawebtraining.dao.exception.DAOException;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public abstract class AbstractDAO<T> implements IAbstractDAO<T> {
+public abstract class AbstractDAO<T extends IDdefinition, PK extends
+        Integer>
+        implements
+        IAbstractDAO<T, PK> {
+
     protected Connection connection;
+    private FactoryDAO parantFactory;
+    private Set<ManyToOne> relations;
+
+    {
+        relations = new HashSet<>();
+    }
 
     public AbstractDAO() {
 
     }
 
-    public abstract void createBody(T tEntity, PreparedStatement preparedStatement) throws SQLException;
+    public AbstractDAO(Connection connection, FactoryDAO factoryDAO) {
+        this.connection = connection;
+        this.factoryDAO = factoryDAO;
+    }
 
-    public abstract void updateBody(T tEntity, PreparedStatement preparedStatement) throws SQLException;
+    private FactoryDAO factoryDAO;// to convert data to object
 
-    public abstract void deleteBody(T tEntity, PreparedStatement preparedStatement) throws SQLException;
 
+    //public abstract void createBody(T tEntity, PreparedStatement  preparedStatement) throws SQLException;
+
+    /**
+     * Return sql query to insert record.
+     * <p/>
+     * INSERT INTO [Table] ([Arguments]) VALUES (?, ...);
+     */
+    public abstract String getCreateQuery();
+
+    /**
+     * Return sql query to update record.
+     * <p/>
+     * UPDATE [Table] SET [column = ?, column = ?, ...] WHERE id = ?;
+     */
+    public abstract String getUpdateQuery();
+
+    /**
+     *Set arguments for insert.
+     * Use also makePrStmtForEntity(T entity, PreparedStatement prpStmt) to
+     * avoid copy past
+     */
+    public abstract void prepareStatementForInsert(T entity,PreparedStatement
+            preparedStatement) throws SQLException;
+
+    /**
+     *Set arguments for update.
+     * Use also makePrStmtForEntity(T entity, PreparedStatement prpStmt) to
+     * avoid copy past
+     */
+    public abstract void prepareStatementForUpdate(T entity,PreparedStatement
+            preparedStatement) throws SQLException;
+
+    /**
+     * Fill in fields of prepared statement by entity for create and update queries
+     */
+    protected abstract void makePrStmtForEntity(T entity, PreparedStatement prpStmt) throws SQLException;
+
+    /**
+     * Return sql query to delete record from DB.
+     * <p/>
+     * DELETE FROM [Table] WHERE id= ?;
+     */
+    public abstract String getDeleteQuery();
+
+    /**
+     * Convert resultset to object
+     */
     protected abstract T toEntityBody(ResultSet resultSet) throws SQLException;
 
+    /**
+     * Return sql query to select all records of objects from DB.
+     * <p/>
+     * SELECT * FROM [Table];
+     */
+    public abstract String getSelectAllQuery();
+
+    public abstract String getSelectAllQueryWhere();
+
+    /**
+     * Return sql query to select records of object by id from DB.
+     * <p/>
+     * SELECT * FROM [Table] WHERE `id` = '?';;
+     */
+    public abstract String getSelectQueryByID();
+
+    /**
+     * Convert ResultSet and return list of appropriate objects.
+     */
+    public abstract List<T> parseResultSet(ResultSet resultSet);
 
 
     public void closeStatement(Statement statement) {
@@ -40,77 +126,155 @@ public abstract class AbstractDAO<T> implements IAbstractDAO<T> {
         this.connection = connection;
     }
 
+//    @Override
+//    public T create() throws DAOException {
+//        return null;
+//    }
+
     @Override
-    public boolean create(T entity) {
-        PreparedStatement preparedStatement = null;
+    public T persist(T entity) throws DAOException {
 
-        T tEntity = (T) entity;
-        try {
-
-            createBody(tEntity, preparedStatement);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeStatement(preparedStatement);
+        if (entity.getId() != 0) {
+            throw new DAOException("Entity is already persisted to DB.");
         }
-        return true;
 
-    }
-
-    @Override
-    public boolean update(T entity) {
         PreparedStatement preparedStatement = null;
+        String SQL = getCreateQuery();
 
-        T tEntity = (T) entity;
+        //Save dependencies
+        //saveDependencies(entity);
+        // add record
         try {
-
-            updateBody(tEntity, preparedStatement);
-
-
+            preparedStatement = connection.prepareStatement(SQL);
+            makePrStmtForEntity(entity, preparedStatement);
+            int count;
+            count = preparedStatement.executeUpdate();
+            if (count != 1){
+                throw new DAOException("Created more than 1 record. (Created " +
+                        "" + count + "record(s)).");
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeStatement(preparedStatement);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean delete(T entity) {
-        PreparedStatement preparedStatement = null;
-
-        T tEntity = (T) entity;
-        try {
-
-            deleteBody(tEntity, preparedStatement);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+           throw  new DAOException("Can con create record into DB", e);
         } finally {
             closeStatement(preparedStatement);
         }
 
-        return true;
+        // get record
+        SQL = getSelectAllQueryWhere();
+
+        try {
+            PreparedStatement preparedStatement1 = connection.prepareStatement(SQL);
+            ResultSet rs = preparedStatement1.executeQuery();
+            List<T> list = parseResultSet(rs);
+            T persistInstance;
+            persistInstance = list.iterator().next();
+            ((Entity)entity).setId(persistInstance.getId());
+        } catch (SQLException e) {
+            throw  new DAOException( " Can not set id for object" , e);
+        }
+
+        return entity;
+    }
+
+
+    @Override
+    public void update(T entity) throws DAOException {
+        PreparedStatement preparedStatement = null;
+        String SQL = getUpdateQuery();
+
+        //Save dependencies
+        //saveDependencies(entity);
+        try {
+            preparedStatement = connection.prepareStatement(SQL);
+            prepareStatementForUpdate(entity, preparedStatement);
+
+            int count = preparedStatement.executeUpdate();
+
+            if (count != 1) {
+                throw new DAOException("More then one record to update: " +
+                        count);
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Can not update", e);
+        } finally {
+            closeStatement(preparedStatement);
+        }
 
     }
 
+
+    @Override
+    public void delete(T entity) throws DAOException {
+        String SQL = getDeleteQuery();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setInt(1, entity.getId());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DAOException("Can not delete from DB", e);
+        } finally {
+            closeStatement(preparedStatement);
+        }
+    }
+
+    @Override
+    public List<T> getAll() throws DAOException {
+        List<T> listEntities = null;
+        String SQL = getSelectAllQuery();
+        PreparedStatement prpStatement = null;
+        try {
+            prpStatement = connection.prepareStatement(SQL);
+            ResultSet rs = prpStatement.executeQuery();
+            listEntities = parseResultSet(rs);
+        } catch (SQLException e) {
+            throw new DAOException("Can not get all objects from DB", e);
+        }
+        return listEntities;
+    }
+
+    @Override
+    public T getByPK(PK pk) throws DAOException {
+        List<T> listEntities = null;
+        String SQL = getSelectQueryByID();
+
+        try {
+            PreparedStatement prpStatement = connection.prepareStatement(SQL);
+            prpStatement.setInt(1, pk);
+        } catch (SQLException e) {
+            throw new DAOException("Can not get instance by id", e);
+        }
+
+        if (listEntities == null || listEntities.size() == 0) {
+            return null;
+        }
+
+        if (listEntities.size() > 1) {
+            throw new DAOException("Received more than one record.");
+        }
+
+        return listEntities.iterator().next();
+    }
 
     protected List<T> toEntity(ResultSet resultSet) {
-        List<T> tEntities = new ArrayList<>();
+        List<T> entities = new ArrayList<>();
         if (resultSet != null) {
             try {
                 while (resultSet.next()) {
 
-                    T tEntity = toEntityBody(resultSet);
+                    T entity = toEntityBody(resultSet);
 
-                    tEntities.add(tEntity);
+                    entities.add(entity);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
         }
-        return tEntities;
+        return entities;
     }
 }

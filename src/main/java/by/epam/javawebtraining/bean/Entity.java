@@ -1,5 +1,7 @@
 package by.epam.javawebtraining.bean;
 
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
+
 public class Entity {
     protected int id;
 
@@ -10,11 +12,11 @@ public class Entity {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

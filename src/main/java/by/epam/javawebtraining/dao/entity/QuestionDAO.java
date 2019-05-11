@@ -11,15 +11,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public class QustionDAO  extends AbstractDAO<Question> {
+public class QuestionDAO/* extends AbstractDAO<Question>*/ {
     public static final String ADD_QUESTION =
-            "INSERT INTO `testingproject`.``question`` (`question`, `question`) VALUES (?, ?);";
+            "INSERT INTO `testingproject`.`question` (`question`, `test_id`) " +
+                    "VALUES (?, ?);";
     public static final String UPDATE_QUESTION =
-            "UPDATE `testingproject`.`question` SET `question`=?, `question`= ? WHERE `id` = ?;";
+            "UPDATE `testingproject`.`question` SET `question`=?, `test_id`= ? WHERE `id` = ?;";
     public static final String DELETE_QUESTION =
             "DELETE FROM `testingproject`.`question` WHERE `id`=?;";
     public static final String SELECT_QUESTION =
-            "SELECT `id`, `question`, `question`FROM " +
+            "SELECT `id`, `question`, `test_id` FROM " +
                     "testingproject.question ";
     public static final String FIND_QUESTION_BY_ID =
             SELECT_QUESTION + "WHERE `id` = ?;";
@@ -28,21 +29,21 @@ public class QustionDAO  extends AbstractDAO<Question> {
     public static final String SELECT_TESTS =
             SELECT_QUESTION + ";";
 
-    public QustionDAO() {
+    public QuestionDAO() {
     }
 
 
-    public Test getTestByID(String id) {
+   /* public Test getTestByID(String id) {
         PreparedStatement preparedStatement = null;
         Test test = null;
         if (id != null) {
             try {
-                preparedStatement = connection.prepareStatement(FIND_TEST_BY_NAME);
+                preparedStatement = connection.prepareStatement(SELECT_QUESTION);
                 preparedStatement.setString(1, id);
 
                 ResultSet resultSet;
                 resultSet = preparedStatement.executeQuery();
-                test = toEntity(resultSet).get(0);
+    //            test = toEntity(resultSet).get(0);
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -89,48 +90,49 @@ public class QustionDAO  extends AbstractDAO<Question> {
         }
         return tests;
     }
+*/
 
-
-    @Override
-    public void createBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement = connection.prepareStatement(ADD_QUESTION);
-        makePrSTMT(tEntity, preparedStatement);
-
-    }
-
-    @Override
-    public void updateBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement = connection.prepareStatement(UPDATE_QUESTION);
-        makePrSTMT(tEntity, preparedStatement);
-    }
-
-    private void makePrSTMT(Question tEntity, PreparedStatement preparedStatement)
-            throws SQLException {
-        preparedStatement.setString(1, tEntity.getQuestionText());
-        preparedStatement.setInt(2, tEntity.getAuthor().getId());
-
-
-        preparedStatement.executeUpdate();
-    }
-
-    @Override
-    public void deleteBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement = connection.prepareStatement(DELETE_QUESTION);
-        preparedStatement.setInt(1, tEntity.getId());
-
-        preparedStatement.executeUpdate();
-
-    }
-
-    @Override
-    protected Question toEntityBody(ResultSet resultSet) throws SQLException {
-        Question question = new Question();
-
-        question.setId(resultSet.getInt("id"));
-        question.setQuestionText(resultSet.getString("question"));
-
-        return question;
-    }
+//    @Override
+//    public void createBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
+//        preparedStatement = connection.prepareStatement(ADD_QUESTION);
+//        makePrSTMT(tEntity, preparedStatement);
+//
+//    }
+//
+//    @Override
+//    public void updateBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
+//        preparedStatement = connection.prepareStatement(UPDATE_QUESTION);
+//        makePrSTMT(tEntity, preparedStatement);
+//    }
+//
+//    private void makePrSTMT(Question tEntity, PreparedStatement preparedStatement)
+//            throws SQLException {
+//        preparedStatement.setString(1, tEntity.getQuestionText());
+//        preparedStatement.setInt(2, );
+//
+//
+//
+//        preparedStatement.executeUpdate();
+//    }
+//
+//    @Override
+//    public void deleteBody(Question tEntity, PreparedStatement preparedStatement) throws SQLException {
+//        preparedStatement = connection.prepareStatement(DELETE_QUESTION);
+//        preparedStatement.setInt(1, tEntity.getId());
+//
+//        preparedStatement.executeUpdate();
+//
+//    }
+//
+//    @Override
+//    protected Question toEntityBody(ResultSet resultSet) throws SQLException {
+//        Question question = new Question();
+//
+//        question.setId(resultSet.getInt("id"));
+//        question.setQuestionText(resultSet.getString("question"));
+//
+//        return question;
+//    }
 
 
 }
