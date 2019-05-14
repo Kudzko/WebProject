@@ -3,16 +3,12 @@ package by.epam.javawebtraining.dao.entity;
 import by.epam.javawebtraining.bean.Role;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
-import by.epam.javawebtraining.dao.daointerface.IDdefinition;
-
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
 
-public class UserDAO extends AbstractDAO <User, Integer>{
+public class UserDAO extends AbstractDAO<User, Long> {
     public static final String ADD_USER =
             "INSERT INTO `testingproject`.`user` (`login`, `password`, `role_id`, `name`, `surname`) VALUES (?, ?, ?, ?, ?);";
     public static final String UPDATE_USER =
@@ -33,7 +29,6 @@ public class UserDAO extends AbstractDAO <User, Integer>{
     }
 
 
-
     @Override
     public String getCreateQuery() {
         return ADD_USER;
@@ -49,14 +44,9 @@ public class UserDAO extends AbstractDAO <User, Integer>{
         return DELETE_USER;
     }
 
-        @Override
-    public String getSelectAllQuery() {
-        return SELECT_USERS ;
-    }
-
     @Override
-    public String getSelectAllQueryWhere() {
-        return SELECT + "WHERE `id` = LAST_INSERT_ID();";
+    public String getSelectAllQuery() {
+        return SELECT_USERS;
     }
 
     @Override
@@ -65,19 +55,14 @@ public class UserDAO extends AbstractDAO <User, Integer>{
     }
 
     @Override
-    public List<User> parseResultSet(ResultSet resultSet) {
-        return toEntity(resultSet);
-    }
-
-    @Override
     public void prepareStatementForInsert(User entity, PreparedStatement preparedStatement) throws SQLException {
-        makePrStmtForEntity( entity,  preparedStatement);
+        makePrStmtForEntity(entity, preparedStatement);
     }
 
     @Override
     public void prepareStatementForUpdate(User entity, PreparedStatement preparedStatement) throws SQLException {
-        makePrStmtForEntity( entity,  preparedStatement);
-        preparedStatement.setInt(6, entity.getId());
+        makePrStmtForEntity(entity, preparedStatement);
+        preparedStatement.setLong(6, entity.getId());
     }
 
     @Override

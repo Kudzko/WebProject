@@ -1,21 +1,20 @@
 package by.epam.javawebtraining.bean;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
 
-public class Test extends Entity{
+import java.util.*;
+
+public class Test extends Entity implements IDdefinition {
     private User author;
     private String testName;
     private String testTheme;
-    private Map<Question, List<Answer>> test;
+    private List<Question> test;
 
     public Test() {
-        test = new HashMap<>();
+        test = new ArrayList<>();
     }
 
-    public Test(User author, String testName, Map<Question, List<Answer>> test) {
+    public Test(User author, String testName, List<Question> test) {
         this.author = author;
         this.testName = testName;
         this.test = test;
@@ -45,24 +44,24 @@ public class Test extends Entity{
         this.testTheme = testTheme;
     }
 
-    public Map<Question, List<Answer>> getTest() {
+    public List<Question> getTest() {
         return test;
     }
 
-    public void setTest(Map<Question, List<Answer>> test) {
+    public void setTest(List<Question> test) {
         this.test = test;
     }
 
-    public void addQuestion(Question question, List<Answer> answers) {
-        test.put(question, answers);
+    public void addQuestion(Question question) {
+        test.add(question);
     }
 
     public void deleteQuestion(Question question) {
         test.remove(question);
     }
 
-    public void deleteQuestion(Question question, List<Answer> answers) {
-        test.remove(question, answers);
+    public void deleteQuestion(int index) {
+        test.remove(index);
     }
 
     @Override

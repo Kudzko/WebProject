@@ -25,33 +25,33 @@ public class FactoryDAO implements IFactoryDAO {
             }
         });
 
-//        daoObjects.put(TestDAO.class, new DaoCreator() {
-//            @Override
-//            public IAbstractDAO create() {
-//                return new TestDAO();
-//            }
-//        });
-//
-//        daoObjects.put(ResultDAO.class, new DaoCreator() {
-//            @Override
-//            public IAbstractDAO create() {
-//                return new ResultDAO();
-//            }
-//        });
-//
-//        daoObjects.put(QuestionDAO.class, new DaoCreator() {
-//            @Override
-//            public IAbstractDAO create() {
-//                return new QuestionDAO();
-//            }
-//        });
-//
-//        daoObjects.put(AnswerDAO.class, new DaoCreator() {
-//            @Override
-//            public IAbstractDAO create() {
-//                return new AnswerDAO();
-//            }
-//        });
+        daoObjects.put(TestDAO.class, new DaoCreator() {
+            @Override
+            public AbstractDAO create() {
+                return new TestDAO();
+            }
+        });
+
+        daoObjects.put(ResultDAO.class, new DaoCreator() {
+            @Override
+            public AbstractDAO create() {
+                return new ResultDAO();
+            }
+        });
+
+        daoObjects.put(QuestionDAO.class, new DaoCreator() {
+            @Override
+            public AbstractDAO create() {
+                return new QuestionDAO();
+            }
+        });
+
+        daoObjects.put(AnswerDAO.class, new DaoCreator() {
+            @Override
+            public AbstractDAO create() {
+                return new AnswerDAO();
+            }
+        });
     }
 
     public static FactoryDAO getInstance() {
@@ -67,5 +67,6 @@ public class FactoryDAO implements IFactoryDAO {
         }
         return daoObject.create();
     }
+
 
     }

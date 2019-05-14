@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractDAO<T extends IDdefinition, PK extends
-        Integer>
+        Long>
         implements
         IAbstractDAO<T, PK> {
 
     protected Connection connection;
-    private FactoryDAO parantFactory;
-    private Set<ManyToOne> relations;
+    protected FactoryDAO parantFactory;
+    //  private Set<ManyToOne> relations;
 
-    {
-        relations = new HashSet<>();
-    }
+//    {
+//        relations = new HashSet<>();
+//    }
 
     public AbstractDAO() {
 
@@ -53,19 +53,19 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
     public abstract String getUpdateQuery();
 
     /**
-     *Set arguments for insert.
+     * Set arguments for insert.
      * Use also makePrStmtForEntity(T entity, PreparedStatement prpStmt) to
      * avoid copy past
      */
-    public abstract void prepareStatementForInsert(T entity,PreparedStatement
+    public abstract void prepareStatementForInsert(T entity, PreparedStatement
             preparedStatement) throws SQLException;
 
     /**
-     *Set arguments for update.
+     * Set arguments for update.
      * Use also makePrStmtForEntity(T entity, PreparedStatement prpStmt) to
      * avoid copy past
      */
-    public abstract void prepareStatementForUpdate(T entity,PreparedStatement
+    public abstract void prepareStatementForUpdate(T entity, PreparedStatement
             preparedStatement) throws SQLException;
 
     /**
@@ -92,9 +92,7 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
      */
     public abstract String getSelectAllQuery();
 
-    public abstract String getSelectAllQueryWhere();
-
-    /**
+      /**
      * Return sql query to select records of object by id from DB.
      * <p/>
      * SELECT * FROM [Table] WHERE `id` = '?';;
@@ -104,8 +102,6 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
     /**
      * Convert ResultSet and return list of appropriate objects.
      */
-    public abstract List<T> parseResultSet(ResultSet resultSet);
-
 
     public void closeStatement(Statement statement) {
 
@@ -143,35 +139,30 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
 
         //Save dependencies
         //saveDependencies(entity);
+
         // add record
         try {
-            preparedStatement = connection.prepareStatement(SQL);
-            makePrStmtForEntity(entity, preparedStatement);
+
+            preparedStatement = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+            prepareStatementForInsert(entity, preparedStatement);
             int count;
             count = preparedStatement.executeUpdate();
-            if (count != 1){
+            if (count != 1) {
                 throw new DAOException("Created more than 1 record. (Created " +
                         "" + count + "record(s)).");
             }
+
+            ResultSet genKey = preparedStatement.getGeneratedKeys();
+            if (genKey.next()) {
+                long id = genKey.getLong(1);
+                ((Entity) entity).setId(id);
+            }
         } catch (SQLException e) {
-           throw  new DAOException("Can con create record into DB", e);
+            throw new DAOException("Can not create record into DB", e);
         } finally {
             closeStatement(preparedStatement);
         }
 
-        // get record
-        SQL = getSelectAllQueryWhere();
-
-        try {
-            PreparedStatement preparedStatement1 = connection.prepareStatement(SQL);
-            ResultSet rs = preparedStatement1.executeQuery();
-            List<T> list = parseResultSet(rs);
-            T persistInstance;
-            persistInstance = list.iterator().next();
-            ((Entity)entity).setId(persistInstance.getId());
-        } catch (SQLException e) {
-            throw  new DAOException( " Can not set id for object" , e);
-        }
 
         return entity;
     }
@@ -211,7 +202,7 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
 
         try {
             preparedStatement = connection.prepareStatement(SQL);
-            preparedStatement.setInt(1, entity.getId());
+            preparedStatement.setLong(1, entity.getId());
 
             preparedStatement.executeUpdate();
 
@@ -230,7 +221,7 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         try {
             prpStatement = connection.prepareStatement(SQL);
             ResultSet rs = prpStatement.executeQuery();
-            listEntities = parseResultSet(rs);
+            listEntities = toEntity(rs);
         } catch (SQLException e) {
             throw new DAOException("Can not get all objects from DB", e);
         }
@@ -244,7 +235,10 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
 
         try {
             PreparedStatement prpStatement = connection.prepareStatement(SQL);
-            prpStatement.setInt(1, pk);
+            prpStatement.setLong(1, pk);
+
+            ResultSet rs = prpStatement.executeQuery();
+            listEntities = toEntity(rs);
         } catch (SQLException e) {
             throw new DAOException("Can not get instance by id", e);
         }
@@ -277,4 +271,18 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         }
         return entities;
     }
+
+    // methods for work with references
+//    protected IDdefinition getDependence(Class<? extends AbstractDAO> fieldClass, long
+//            pk) throws DAOException {
+//
+//        return parantFactory.getDAO(fieldClass).getByPK(pk);
+//    }
+//
+//    protected List<IDdefinition> getDependenceList(Class<? extends AbstractDAO>
+//                                                  fieldClass, long
+//            pk) throws DAOException {
+//
+//        return parantFactory.getDAO(fieldClass).getByPK(pk);
+//    }
 }

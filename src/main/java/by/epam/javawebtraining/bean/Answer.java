@@ -1,11 +1,14 @@
 package by.epam.javawebtraining.bean;
 
 
+import by.epam.javawebtraining.dao.daointerface.IDdefinition;
+
 import java.util.Objects;
 
-public class Answer  extends Entity {
+public class Answer  extends Entity implements IDdefinition {
     private String answerText;
     private boolean right;
+    private long questoinID;
 
     public Answer() {
     }
@@ -29,6 +32,14 @@ public class Answer  extends Entity {
 
     public void setRight(boolean right) {
         this.right = right;
+    }
+
+    public long getQuestoinID() {
+        return questoinID;
+    }
+
+    public void setQuestoinID(long questoinID) {
+        this.questoinID = questoinID;
     }
 
     @Override

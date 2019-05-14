@@ -35,7 +35,7 @@ public class User extends Entity implements IDdefinition {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return super.getId();
     }
 
