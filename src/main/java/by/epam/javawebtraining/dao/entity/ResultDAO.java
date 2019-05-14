@@ -6,14 +6,16 @@ import by.epam.javawebtraining.bean.Test;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
 import by.epam.javawebtraining.dao.daointerface.IDdefinition;
+import by.epam.javawebtraining.dao.daointerface.IResultDAO;
 import by.epam.javawebtraining.dao.exception.DAOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class ResultDAO extends AbstractDAO<Result, Long> {
+public class ResultDAO extends AbstractDAO<Result, Long> implements IResultDAO <Result, Long>{
 
     public static final String ADD_RESULT =
             "INSERT INTO `testingproject`.`result` (`user_id`, `test_id`,`mark`) " +
@@ -109,4 +111,28 @@ public class ResultDAO extends AbstractDAO<Result, Long> {
         return daoInstance;
     }
 
+    @Override
+    public List<Result> getResultByTestId(long testId) throws DAOException {
+
+      return   getResultsByFK( testId, FIND_RESULT_BY_TEST_ID);
+    }
+
+    @Override
+    public List<Result> getResultByUserId(long testId) throws DAOException {
+        return   getResultsByFK( testId, FIND_RESULT_BY_USER_ID);
+    }
+
+    private List<Result> getResultsByFK(long fk, String selectQuery) throws DAOException {
+        List<Result> listResults = null;
+
+        PreparedStatement prpStatement = null;
+        try {
+            prpStatement = connection.prepareStatement(selectQuery);
+            ResultSet rs = prpStatement.executeQuery();
+            listResults = toEntity(rs);
+        } catch (SQLException e) {
+            throw new DAOException("Can not get results by FK", e);
+        }
+        return listResults;
+    }
 }

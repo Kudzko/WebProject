@@ -5,7 +5,7 @@ import by.epam.javawebtraining.dao.exception.DAOException;
 
 import java.util.List;
 
-public interface IAnswerDAO<Answer, Integer> extends IAbstractDAO<Answer, Integer>{
+public interface IAnswerDAO<Answer, Long> extends IAbstractDAO<Answer, Long>{
 
     List<Answer> getAnswerByFK(long fk) throws DAOException;
 }
