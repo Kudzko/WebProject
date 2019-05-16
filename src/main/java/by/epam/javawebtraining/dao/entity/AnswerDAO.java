@@ -13,7 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AnswerDAO extends AbstractDAO<Answer, Integer> implements IAnswerDAO<Answer, Integer> {
+public class AnswerDAO extends AbstractDAO<Answer, Long> implements
+        IAnswerDAO<Answer, Long> {
     public static final String ADD_ANSWER =
             "INSERT INTO `testingproject`.`answer` (`answertext`, `right`, `question_id`) VALUES (?, ?, ?);";
     public static final String UPDATE_ANSWER =

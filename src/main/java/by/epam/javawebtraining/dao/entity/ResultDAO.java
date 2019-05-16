@@ -99,7 +99,7 @@ public class ResultDAO extends AbstractDAO<Result, Long> implements IResultDAO <
 
 
     private IDdefinition getDependence(Class<? extends AbstractDAO> fieldClass,
-                                   long
+                                   Long
                                            pk) {
         IDdefinition daoInstance = null;
         try {

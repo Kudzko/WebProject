@@ -184,7 +184,7 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
     }
 
     private IDdefinition getAuthor(Class<? extends AbstractDAO> fieldClass,
-                                    long
+                                    Long
             pk) {
         IDdefinition daoInstance = null;
         try {

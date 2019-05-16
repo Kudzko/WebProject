@@ -1,0 +1,68 @@
+*{
+	padding: 0;
+	margin:0;
+	box-sizing: border-box;
+}
+
+.container{
+	width: 550px;
+	background: #e7e4e4;
+	margin: 50px auto;
+	padding: 30px 20px;
+	border-radius: 5px;
+}
+form {
+	width: 300px;
+	margin: auto;
+}
+p {
+	text-align: center;
+	font-family: sans-serif;
+	line-height: 20px;
+
+}
+.p1 {
+	font-weight: bold;
+	line-height: 30px;
+}
+input {
+	border-radius: 5px;
+	padding: 10px 5px;
+	border: 1px solid lightgray;
+	width: 100%;
+	margin-top: 30px;
+}
+
+
+
+input[id="password"] {
+	margin-bottom: 30px;
+}
+
+select{
+	-webkit-appearance:none; /*скрыть стандартную стрелочку*/
+}
+.select{
+	position: relative;
+	display: inline-block;
+
+}
+
+
+option {
+	text-align: center;
+}
+button {
+	border-radius: 5px;
+	padding: 10px 5px;
+	border: 1px solid lightgray;
+	width: 100%;	
+	background-color: #29a52f;
+	margin: 15px 0;
+	color: white;
+	font-weight: bold;
+}
+button.signIn {
+		background-color: #3531d4;
+
+}
