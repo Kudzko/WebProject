@@ -83,12 +83,17 @@ public class UserDAO extends AbstractDAO<User, Long> {
         user.setPassword(resultSet.getString("password"));
         user.setName(resultSet.getString("name"));
         user.setSurname(resultSet.getString("surname"));
-        user.setRole(Role.values()[resultSet.getInt("role_id")]);
+        user.setRole(Role.values()[resultSet.getInt("role_id")-1]);
 
         return user;
     }
 
-
+    /**
+     * return instance of user or empty user instance if there is no such user
+     *
+     * @param login
+     * @return
+     */
     public User getUserByLogin(String login) {
         PreparedStatement preparedStatement = null;
         User user = null;
@@ -99,7 +104,13 @@ public class UserDAO extends AbstractDAO<User, Long> {
 
                 ResultSet resultSet;
                 resultSet = preparedStatement.executeQuery();
-                user = toEntity(resultSet).get(0);
+
+                if (resultSet.next()) {
+                    resultSet.previous();
+                    user = toEntity(resultSet).get(0);
+                } else {
+                    user = new User();
+                }
 
             } catch (SQLException e) {
                 e.printStackTrace();

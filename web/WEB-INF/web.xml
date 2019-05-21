@@ -3,4 +3,65 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+    <servlet>
+        <servlet-name>Controller</servlet-name>
+        <servlet-class>by.epam.javawebtraining.controller.Controller</servlet-class>
+    </servlet>
+
+
+    <!-- ================ Built In Servlet Mappings ========================= -->
+
+
+    <!-- The servlet mappings for the built in servlets defined above.  Note  -->
+    <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
+    <!-- must uncomment these mappings (or add them to your application's own -->
+    <!-- web.xml deployment descriptor) to enable these services              -->
+
+    <!-- The mapping for the default servlet -->
+    <servlet-mapping>
+        <servlet-name>Controller</servlet-name>
+        <url-pattern>/start</url-pattern>
+    </servlet-mapping>
+
+
+
+
+
+
+    <!-- ==================== Built In Filter Mappings ====================== -->
+
+    <!-- The mapping for the HTTP header security Filter -->
+    <!--
+        <filter-mapping>
+            <filter-name>httpHeaderSecurity</filter-name>
+            <url-pattern>/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+        </filter-mapping>
+    -->
+
+    <!-- The mapping for the Set Character Encoding Filter -->
+    <!--
+        <filter-mapping>
+            <filter-name>setCharacterEncodingFilter</filter-name>
+            <url-pattern>/*</url-pattern>
+        </filter-mapping>
+    -->
+
+    <!-- The mapping for the Failed Request Filter -->
+    <!--
+        <filter-mapping>
+            <filter-name>failedRequestFilter</filter-name>
+            <url-pattern>/*</url-pattern>
+        </filter-mapping>
+    -->
+
+    <!-- The mapping for the SSI Filter -->
+    <!--
+        <filter-mapping>
+            <filter-name>ssi</filter-name>
+            <url-pattern>*.shtml</url-pattern>
+        </filter-mapping>
+    -->
+
+
 </web-app>

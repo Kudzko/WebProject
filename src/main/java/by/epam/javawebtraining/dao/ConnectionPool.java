@@ -1,6 +1,7 @@
 package by.epam.javawebtraining.dao;
 
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -41,6 +42,7 @@ public class ConnectionPool {
             if (connection == null) {
                 connection = createConnection();
             }
+
         } else {
             try {
                 connection = connectionQueue.take();
@@ -65,7 +67,6 @@ public class ConnectionPool {
 
     private Connection createConnection() {
         Connection connection = null;
-
         try {
 
             Class.forName(DRIVER_NAME);

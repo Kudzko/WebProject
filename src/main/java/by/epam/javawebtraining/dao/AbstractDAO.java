@@ -16,7 +16,7 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         implements
         IAbstractDAO<T, PK> {
 
-    protected Connection connection;
+    protected  Connection connection;
     protected FactoryDAO parantFactory;
     //  private Set<ManyToOne> relations;
 
