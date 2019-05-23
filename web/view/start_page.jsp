@@ -36,7 +36,7 @@
             <button type="submit" name="command" value="log_in"> Log in</button>
 
             <button type="submit" class="signIn" name="command"
-                    value="sign_in">Sign in
+                    value="start_sign_in">Sign in
             </button>
         </div>
     </form>

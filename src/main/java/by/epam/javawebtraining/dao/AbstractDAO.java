@@ -7,9 +7,7 @@ import by.epam.javawebtraining.dao.exception.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class AbstractDAO<T extends IDdefinition, PK extends
         Long>
@@ -17,7 +15,8 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         IAbstractDAO<T, PK> {
 
     protected  Connection connection;
-    protected FactoryDAO parantFactory;
+    protected FactoryDAO parantFactory = FactoryDAO.getInstance();
+    private FactoryDAO factoryDAO;// to convert data to object
     //  private Set<ManyToOne> relations;
 
 //    {
@@ -33,7 +32,7 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         this.factoryDAO = factoryDAO;
     }
 
-    private FactoryDAO factoryDAO;// to convert data to object
+
 
 
     //public abstract void createBody(T tEntity, PreparedStatement  preparedStatement) throws SQLException;

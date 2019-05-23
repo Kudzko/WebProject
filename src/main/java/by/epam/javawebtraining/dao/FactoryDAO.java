@@ -15,7 +15,7 @@ public class FactoryDAO implements IFactoryDAO {
 
     private Map<Class, IFactoryDAO.DaoCreator> daoObjects;
 
-    public FactoryDAO() {
+    private FactoryDAO() {
         this.daoObjects = new HashMap<Class, DaoCreator>();
 
         daoObjects.put(UserDAO.class, new DaoCreator() {

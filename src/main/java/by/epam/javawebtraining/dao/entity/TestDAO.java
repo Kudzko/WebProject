@@ -1,10 +1,11 @@
 package by.epam.javawebtraining.dao.entity;
 
 
-
 import by.epam.javawebtraining.bean.Test;
+import by.epam.javawebtraining.bean.TestTheme;
 import by.epam.javawebtraining.bean.User;
 import by.epam.javawebtraining.dao.AbstractDAO;
+import by.epam.javawebtraining.dao.FactoryDAO;
 import by.epam.javawebtraining.dao.daointerface.IDdefinition;
 import by.epam.javawebtraining.dao.daointerface.ITestDAO;
 import by.epam.javawebtraining.dao.exception.DAOException;
@@ -13,25 +14,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestDAO extends AbstractDAO<Test, Long> implements
         ITestDAO<Test, Long> {
     public static final String ADD_TEST =
-            "INSERT INTO `testingproject`.`test` (`user_id`, `test_theme`, `test_theme`) VALUES (?, ?, ?);";
+            "INSERT INTO `testingproject`.`test` (`author`, `test_theme`, " +
+                    "`test_name`) VALUES (?, ?, ?);";
     public static final String UPDATE_TEST =
-            "UPDATE `testingproject`.`test` SET `user_id`=?, `test_theme`= ?, `test_name`= ? WHERE `id` = ?;";
+            "UPDATE `testingproject`.`test` SET `author`=?, `test_theme`= ?, `test_name`= ? WHERE `id` = ?;";
     public static final String DELETE_TEST =
             "DELETE FROM `testingproject`.`test` WHERE `id`=?;";
     public static final String SELECT_TEST =
-            "SELECT `id`, `user_id`, `test_theme`, `test_name` FROM " +
+            "SELECT `id`, `author`, `test_theme`, `test_name` FROM " +
                     "`testingproject`.`test` ";
     public static final String FIND_TEST_BY_ID =
             SELECT_TEST + "WHERE `id` = ?;";
     public static final String FIND_TEST_BY_NAME =
             SELECT_TEST + "WHERE `test_name` = ?;";
-    public static final String FIND_TEST_USER_ID =
+    public static final String FIND_TEST_BY_USER_ID =
             SELECT_TEST + "WHERE `user_id` = ?;";
+    public static final String FIND_TEST_BY_TEST_ID =
+            SELECT_TEST + "WHERE `test_theme` = ?;";
     public static final String SELECT_TESTS =
             SELECT_TEST + ";";
 
@@ -41,6 +46,9 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
     public static final String FIND_TEST_THEME_BY_ID =
             "SELECT `id`, `test_theme` FROM " +
                     "`testingproject`.`test_theme` WHERE `id`=?; ";
+    public static final String SELECT_ALL_THEMES =
+            "SELECT `id`, `test_theme` FROM " +
+                    "`testingproject`.`test_theme`; ";
     public static final String INSERT_TEST_THEME =
             "INSERT INTO `testingproject`.`test_theme` (`test_theme`) VALUES (?);";
 
@@ -88,7 +96,7 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
 
         test.setId(resultSet.getLong("id"));
         test.setAuthor((User) getAuthor(UserDAO.class, resultSet.getLong
-                ("user_id")));
+                ("author")));
         test.setTestTheme(findThemeById(resultSet.getLong("test_theme")));
         test.setTestName(resultSet.getString("test_name"));
         //test.setTest();
@@ -111,7 +119,7 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
     public List<Test> getTestByUserId(long fk) throws DAOException {
 
         List<Test> listTests = null;
-        String SQL = FIND_TEST_USER_ID;
+        String SQL = FIND_TEST_BY_USER_ID;
 
         try {
             PreparedStatement prpStatement = connection.prepareStatement(SQL);
@@ -131,7 +139,42 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
         return listTests;
     }
 
-    private long getTestThemeId(String theme) throws SQLException{
+    private IDdefinition getAuthor(Class<? extends AbstractDAO> fieldClass,
+                                   Long pk) {
+
+        IDdefinition daoInstance = null;
+        try {
+            parantFactory = FactoryDAO.getInstance();
+            UserDAO userDAO = (UserDAO) parantFactory.getDAO(fieldClass);
+            userDAO.setConnection(connection);
+            daoInstance = userDAO.getByPK(pk);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+
+        return daoInstance;
+    }
+
+    public List<Test> getTestByThemeId(long fk) throws DAOException {
+
+        List<Test> listTests = null;
+        String SQL = FIND_TEST_BY_TEST_ID;
+
+        try {
+            PreparedStatement prpStatement = connection.prepareStatement(SQL);
+            prpStatement.setLong(1, fk);
+
+            ResultSet rs = prpStatement.executeQuery();
+            listTests = toEntity(rs);
+
+        } catch (SQLException e) {
+            throw new DAOException("Can not get test by Theme id", e);
+        }
+
+        return listTests;
+    }
+
+    private long getTestThemeId(String theme) throws SQLException {
         long themeId = findTheme(theme);
         if (themeId == 0) {
             themeId = insertTheme(theme);
@@ -170,29 +213,39 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
     }
 
     private String findThemeById(long id) throws SQLException {
-        String theme;
+        String theme = null;
 
         PreparedStatement prpStatement = connection.prepareStatement
                 (FIND_TEST_THEME_BY_ID);
         prpStatement.setLong(1, id);
         ResultSet rs = prpStatement.executeQuery();
+if (rs.next()) {
+    theme = rs.getString("test_theme");
 
-        theme = rs.getString("test_theme");
-
-
+}
         return theme;
     }
 
-    private IDdefinition getAuthor(Class<? extends AbstractDAO> fieldClass,
-                                    Long
-            pk) {
-        IDdefinition daoInstance = null;
+    public List<TestTheme> getAllThemes() throws DAOException {
+        List<TestTheme> themes = new ArrayList<>();
         try {
-            daoInstance = parantFactory.getDAO(fieldClass).getByPK(pk);
-        } catch (DAOException e) {
-            e.printStackTrace();
-        }
+            PreparedStatement prpStatement = connection.prepareStatement
+                    (SELECT_ALL_THEMES);
 
-        return daoInstance;
+            ResultSet rs = prpStatement.executeQuery();
+
+            while (rs.next()) {
+                TestTheme testTheme = new TestTheme();
+                testTheme.setId(rs.getLong("id"));
+                testTheme.setTheme(rs.getString("test_theme"));
+
+                themes.add(testTheme);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Can not get all themes from DB", e);
+        }
+        return themes;
     }
+
+
 }
