@@ -121,6 +121,12 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         this.connection = connection;
     }
 
+    public Connection relizeConnectionFromDAO() {
+        Connection connection = getConnection();
+        this.connection = null;
+        return connection;
+    }
+
 //    @Override
 //    public T create() throws DAOException {
 //        return null;

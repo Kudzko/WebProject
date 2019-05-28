@@ -8,16 +8,16 @@ public class Test extends Entity implements IDdefinition {
     private User author;
     private String testName;
     private String testTheme;
-    private List<Question> test;
+    private List<Question> questionList;
 
     public Test() {
-        test = new ArrayList<>();
+        questionList = new ArrayList<>();
     }
 
-    public Test(User author, String testName, List<Question> test) {
+    public Test(User author, String testName, List<Question> questionList) {
         this.author = author;
         this.testName = testName;
-        this.test = test;
+        this.questionList = questionList;
     }
 
     public User getAuthor() {
@@ -44,24 +44,24 @@ public class Test extends Entity implements IDdefinition {
         this.testTheme = testTheme;
     }
 
-    public List<Question> getTest() {
-        return test;
+    public List<Question> getQuestionList() {
+        return questionList;
     }
 
-    public void setTest(List<Question> test) {
-        this.test = test;
+    public void setQuestionList(List<Question> questionList) {
+        this.questionList = questionList;
     }
 
     public void addQuestion(Question question) {
-        test.add(question);
+        questionList.add(question);
     }
 
     public void deleteQuestion(Question question) {
-        test.remove(question);
+        questionList.remove(question);
     }
 
     public void deleteQuestion(int index) {
-        test.remove(index);
+        questionList.remove(index);
     }
 
     @Override
@@ -71,13 +71,13 @@ public class Test extends Entity implements IDdefinition {
         Test test1 = (Test) o;
         return Objects.equals(author, test1.author) &&
                 Objects.equals(testName, test1.testName) &&
-                Objects.equals(test, test1.test);
+                Objects.equals(questionList, test1.questionList);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(author, testName, test);
+        return Objects.hash(author, testName, questionList);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Test extends Entity implements IDdefinition {
         return "Test{" +
                 "author=" + author +
                 ", testName='" + testName + '\'' +
-                ", test=" + test +
+                ", questionList=" + questionList +
                 '}';
     }
 }

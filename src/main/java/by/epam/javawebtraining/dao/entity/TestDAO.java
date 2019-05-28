@@ -80,7 +80,7 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
     @Override
     protected void makePrStmtForEntity(Test entity, PreparedStatement prpStmt) throws SQLException {
         prpStmt.setLong(1, entity.getAuthor().getId());
-        prpStmt.setLong(2, getTestThemeId(entity.getTestTheme()));
+        prpStmt.setLong(2, getTestThemeIdHere(entity.getTestTheme()));
         prpStmt.setString(3, entity.getTestName());
 
     }
@@ -99,7 +99,7 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
                 ("author")));
         test.setTestTheme(findThemeById(resultSet.getLong("test_theme")));
         test.setTestName(resultSet.getString("test_name"));
-        //test.setTest();
+        //test.setQuestionList();
 
         return test;
     }
@@ -174,11 +174,24 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
         return listTests;
     }
 
-    private long getTestThemeId(String theme) throws SQLException {
-        long themeId = findTheme(theme);
+    public long getTestThemeId(String theme) throws DAOException {
+        long themeId;
+        try {
+            themeId = getTestThemeIdHere(theme);
+        } catch (SQLException e) {
+            throw new DAOException("Can not get theme id", e);
+        }
+        return themeId;
+    }
+
+    private long getTestThemeIdHere(String theme) throws SQLException {
+        long themeId = 0;
+
+        themeId = findTheme(theme);
         if (themeId == 0) {
             themeId = insertTheme(theme);
         }
+
         return themeId;
     }
 
@@ -190,9 +203,9 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
         prpStatement.setString(1, theme);
 
         prpStatement.executeUpdate();
-        ResultSet genKey = prpStatement.getGeneratedKeys();
-        if (genKey.next()) {
-            id = genKey.getLong(1);
+        ResultSet generetedKey = prpStatement.getGeneratedKeys();
+        if (generetedKey.next()) {
+            id = generetedKey.getLong(1);
         }
         return id;
     }
@@ -219,10 +232,10 @@ public class TestDAO extends AbstractDAO<Test, Long> implements
                 (FIND_TEST_THEME_BY_ID);
         prpStatement.setLong(1, id);
         ResultSet rs = prpStatement.executeQuery();
-if (rs.next()) {
-    theme = rs.getString("test_theme");
+        if (rs.next()) {
+            theme = rs.getString("test_theme");
 
-}
+        }
         return theme;
     }
 

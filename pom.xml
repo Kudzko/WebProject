@@ -24,7 +24,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
+            <scope>questionList</scope>
         </dependency>
 
         <!-- Servlet API 4.0 for tomcat 9 -->

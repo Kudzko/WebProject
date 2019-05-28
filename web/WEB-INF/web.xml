@@ -15,7 +15,7 @@
 
     <filter>
         <filter-name>CharacterFilter</filter-name>
-        <filter-class>by.epam.javawebtraining.utils.CharacterEncodingFilter</filter-class>
+        <filter-class>by.epam.javawebtraining.utils.filter.CharacterEncodingFilter</filter-class>
     </filter>
 
     <filter-mapping>

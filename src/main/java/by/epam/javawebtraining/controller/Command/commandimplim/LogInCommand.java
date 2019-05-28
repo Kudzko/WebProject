@@ -1,8 +1,7 @@
 package by.epam.javawebtraining.controller.Command.commandimplim;
 
-import by.epam.javawebtraining.bean.Role;
 import by.epam.javawebtraining.bean.TestTheme;
-import by.epam.javawebtraining.configurationclasses.PageAdressManager;
+import by.epam.javawebtraining.utils.PageAdressManager;
 import by.epam.javawebtraining.controller.Command.Command;
 import by.epam.javawebtraining.service.ServiceFactory;
 import by.epam.javawebtraining.service.ServiceType;
@@ -11,6 +10,7 @@ import by.epam.javawebtraining.service.impementations.UserService;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 public class LogInCommand implements Command {
@@ -36,8 +36,13 @@ public class LogInCommand implements Command {
 
                     TestService testService = (TestService) ServiceFactory.getService
                             (ServiceType.TEST_SERVICE);
+
                     List<TestTheme> themes = testService.getTestThemes();
                     request.setAttribute("testThemeList", themes);
+
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", userService.getUserByLogin
+                            (login));
                     break;
                 case STUDENT:
                     targetPage = GO_TO_STUDENT_MAIN;

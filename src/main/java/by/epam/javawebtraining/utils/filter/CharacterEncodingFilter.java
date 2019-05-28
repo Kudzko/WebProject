@@ -1,4 +1,4 @@
-package by.epam.javawebtraining.utils;
+package by.epam.javawebtraining.utils.filter;
 
 import javax.servlet.*;
 import java.io.IOException;

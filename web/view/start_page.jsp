@@ -18,7 +18,7 @@
 </head>
 <body>
 <div class="container">
-    <p class="p1">Welcome to test web app</p>
+    <p class="p1">Welcome to questionList web app</p>
     <p>To continue, please log in or sign in.</p>
     <form action="start" method="post">
 

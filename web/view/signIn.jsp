@@ -31,6 +31,7 @@
                    placeholder="suname" required>
 
         </div>
+        <br>
         <p class="role">Status</p>
         <div class="select">
             <select name="role" id="">

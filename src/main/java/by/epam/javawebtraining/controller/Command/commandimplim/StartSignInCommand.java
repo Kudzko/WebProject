@@ -1,6 +1,6 @@
 package by.epam.javawebtraining.controller.Command.commandimplim;
 
-import by.epam.javawebtraining.configurationclasses.PageAdressManager;
+import by.epam.javawebtraining.utils.PageAdressManager;
 import by.epam.javawebtraining.controller.Command.Command;
 
 import javax.servlet.http.HttpServletRequest;

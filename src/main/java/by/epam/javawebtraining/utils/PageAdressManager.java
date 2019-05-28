@@ -1,4 +1,4 @@
-package by.epam.javawebtraining.configurationclasses;
+package by.epam.javawebtraining.utils;
 
 import java.util.ResourceBundle;
 

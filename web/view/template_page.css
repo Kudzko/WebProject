@@ -1,19 +1,45 @@
 /**{*/
-    /*outline: 2px solid #000;*/
+/*outline: 2px solid #000;*/
 /*}*/
+* {
+    font-family: 'Open Sans', sans-serif;
+}
 
 header {
-    height: 100px;
+    height: 80px;
     margin: auto;
+    background: darkgreen;
+    align-content: center;
+    text-align: center;
 }
 
 .container {
+    margin: auto;
     width: 800px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.footer{
-    height: 200px;
+footer{
+    height: 80px;
     margin: auto;
+    background: lightgray;
+    text-align: center;
+    justify-content: space-between;
+
+}
+
+
+button{
+    display: inline-block;
+    border-radius: 10px;
+    background: lightblue;
+    border: 1px solid green;
+}
+
+.box{white-space:nowrap}
+.box div{
+    display:inline-block;
+
 }

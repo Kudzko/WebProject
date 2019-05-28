@@ -9,23 +9,25 @@ import by.epam.javawebtraining.service.ServiceType;
 import by.epam.javawebtraining.service.impementations.TestService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
-public class ChooseTestThemeCommand implements Command {
-    public static final String CURRENT_PAGE = PageAdressManager.getPageAdress("pageadress.tutor_main");
+public class BackToTestsCommand  implements Command {
+    public static final String GO_TO_TUTOR_MAIN = PageAdressManager
+            .getPageAdress("pageadress.tutor_main");
     public static final String DEFAULTERRRORPAGE = PageAdressManager.getPageAdress("pageadress.defaulterrrorpage");
+
 
 
     @Override
     public String execute(HttpServletRequest request) {
         TestService testService = (TestService) ServiceFactory.getService
                 (ServiceType.TEST_SERVICE);
-        Long themeId = Long.parseLong(request.getParameter("test_theme"));
-        List<Test> tests = testService.getTestByThemeId(themeId);
-        request.setAttribute("testList", tests);
-
         List<TestTheme> themes = testService.getTestThemes();
         request.setAttribute("testThemeList", themes);
-        return CURRENT_PAGE;
+
+        HttpSession session = request.getSession();
+        session.removeAttribute("currentTest");
+        return GO_TO_TUTOR_MAIN;
     }
 }

@@ -20,10 +20,12 @@ public class InputTextValidator {
      */
     public boolean isThereText(String inputText) {
         boolean result = false;
-        if ((inputText != null)
-                && ((inputText.length() > 0)
-                && (inputText.length() < 255))) {
-            result = true;
+        if (inputText != null){
+            inputText = inputText.trim();
+            if (((inputText.length() > 0)
+                    && (inputText.length() < 255))){
+                result = true;
+            }
         }
         return result;
     }

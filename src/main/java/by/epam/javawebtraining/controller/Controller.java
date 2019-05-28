@@ -1,6 +1,7 @@
 package by.epam.javawebtraining.controller;
 
 import by.epam.javawebtraining.controller.Command.Command;
+import by.epam.javawebtraining.utils.DBInitializator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -30,4 +31,11 @@ public class Controller extends HttpServlet {
         dispatcher.forward(request, response );
           }
 
+//    @Override
+//    public void init() throws ServletException {
+//        super.init();
+//        DBInitializator dbInitializator = new DBInitializator();
+//        dbInitializator.initDB();
+//        System.out.println("Init Controller");
+//    }
 }

@@ -14,8 +14,8 @@ import java.sql.Connection;
 
 public class UserService extends AbstractService {
     public static final String[] ROLE = {"student", "tutor"};
-    private InputTextValidator validator = InputTextValidator.getInstance();
-    private FactoryDAO factoryDAO = FactoryDAO.getInstance();
+
+
 
     public UserService() {
     }
@@ -109,11 +109,17 @@ public class UserService extends AbstractService {
     public User getUserByLogin(String login) {
         User user = null;
         if (validator.isThereText(login)) {
+            UserDAO userDAO = null;
             try {
-                UserDAO userDAO = (UserDAO) factoryDAO.getDAO(UserDAO.class);
+                userDAO = (UserDAO) factoryDAO.getDAO(UserDAO.class);
+                Connection connection = connectionPool.getConnection();
+                userDAO.setConnection(connection);
                 user = userDAO.getUserByLogin(login);
+
             } catch (DAOException e) {
                 e.printStackTrace();
+            }finally {
+              connectionPool.returnConnection(userDAO.relizeConnectionFromDAO());
             }
         }
         return user;

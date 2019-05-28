@@ -1,12 +1,13 @@
 package by.epam.javawebtraining.controller.Command.commandimplim;
 
-import by.epam.javawebtraining.configurationclasses.PageAdressManager;
+import by.epam.javawebtraining.utils.PageAdressManager;
 import by.epam.javawebtraining.controller.Command.Command;
 import by.epam.javawebtraining.service.ServiceFactory;
 import by.epam.javawebtraining.service.ServiceType;
 import by.epam.javawebtraining.service.impementations.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class SignInCommand implements Command {
     public static final String GO_TO_STUDENT_MAIN = PageAdressManager
@@ -48,10 +49,10 @@ public class SignInCommand implements Command {
                     break;
             }
 
+            HttpSession session = request.getSession();
+            session.setAttribute("user",userService.getUserByLogin(login) );
         } else {
-            request.setAttribute("loginBooked", "Login allready booked or " +
-                    "invalid or name or surname (must contain [0-9_A-Za-z] " +
-                    "and have length at least one letter).");
+            request.setAttribute("loginBooked", "Login allready booked.");
             targetPage = CURRENT_PAGE;
         }
 
