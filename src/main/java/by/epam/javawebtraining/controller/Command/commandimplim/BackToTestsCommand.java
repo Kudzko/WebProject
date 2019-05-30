@@ -28,6 +28,7 @@ public class BackToTestsCommand  implements Command {
 
         HttpSession session = request.getSession();
         session.removeAttribute("currentTest");
+        session.removeAttribute("state");
         return GO_TO_TUTOR_MAIN;
     }
 }

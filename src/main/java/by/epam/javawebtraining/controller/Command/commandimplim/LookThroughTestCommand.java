@@ -3,7 +3,7 @@ package by.epam.javawebtraining.controller.Command.commandimplim;
 import by.epam.javawebtraining.bean.Test;
 import by.epam.javawebtraining.utils.PageAdressManager;
 import by.epam.javawebtraining.controller.Command.Command;
-import by.epam.javawebtraining.utils.TestBuilder;
+import by.epam.javawebtraining.utils.beanbuilder.TestBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 

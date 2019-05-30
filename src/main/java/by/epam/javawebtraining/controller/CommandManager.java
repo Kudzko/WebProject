@@ -2,6 +2,11 @@ package by.epam.javawebtraining.controller;
 
 import by.epam.javawebtraining.controller.Command.Command;
 import by.epam.javawebtraining.controller.Command.commandimplim.*;
+import by.epam.javawebtraining.controller.Command.commandimplim.create.AddQuestionCommand;
+import by.epam.javawebtraining.controller.Command.commandimplim.create.ConfirmAnswersCommand;
+import by.epam.javawebtraining.controller.Command.commandimplim.create.CreateNewTestCommand;
+import by.epam.javawebtraining.controller.Command.commandimplim.create.CreateQuestionCommand;
+import by.epam.javawebtraining.controller.Command.commandimplim.edit.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +16,9 @@ public class CommandManager {
         START_SIGN_IN, LOG_IN, LOG_OUT, SIGN_IN, CHOOSE_TEST_THEME,
         BACK_TO_TESTS, LOOK_THROUGH_TEST, CREATE_NEW_TEST,
         GO_TO_CREATE_TEST_PAGE, ADD_QUESTION, CREATE_QUESTION,
-        SAVE_TEST, CREATE_ANSWERS, CONFIRM_ANSWERS,
+        SAVE_TEST, CREATE_ANSWERS, CONFIRM_ANSWERS, DELETE_TEST, EDIT_TEST,
+        UPDATE_TEST, DELETE_QUESTION, EDIT_QUESTION, UPDATE_QUESTION,
+        UPDATE_ANSWERS,
         DEFAULT_COMMAND;
     }
 
@@ -33,8 +40,14 @@ public class CommandManager {
         commandMap.put(CommandType.GO_TO_CREATE_TEST_PAGE, new GoToCresteTestPage());
         commandMap.put(CommandType.ADD_QUESTION, new AddQuestionCommand());
         commandMap.put(CommandType.CREATE_QUESTION, new CreateQuestionCommand());
-        commandMap.put(CommandType.CREATE_ANSWERS, new CreateAnswersCommand());
         commandMap.put(CommandType.CONFIRM_ANSWERS, new ConfirmAnswersCommand());
+        commandMap.put(CommandType.DELETE_TEST, new DeleteTestCommand());
+        commandMap.put(CommandType.EDIT_TEST, new EditTestCommand());
+        commandMap.put(CommandType.UPDATE_TEST, new UpdateTestCommand());
+        commandMap.put(CommandType.DELETE_QUESTION, new DeleteQuestionCommand());
+        commandMap.put(CommandType.EDIT_QUESTION, new EditQuestionCommand());
+        commandMap.put(CommandType.UPDATE_QUESTION, new UpdateQuestionCommand());
+        commandMap.put(CommandType.UPDATE_ANSWERS, new UpdateAnswersCommand());
 
         commandMap.put(CommandType.DEFAULT_COMMAND, new DefaultCommand());
     }

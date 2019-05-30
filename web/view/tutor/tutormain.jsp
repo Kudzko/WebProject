@@ -6,30 +6,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="template_page.css">
+    <link rel="stylesheet" type="text/css" href="../cssstyle/template_page.css">
     <title>Tutor</title>
     <style>
-        <%@include file="/view/template_page.css"%>
+        <%@include file="/view/cssstyle/template_page.css"%>
     </style>
 </head>
 <body>
 <header>
-    <div class="container">
-
-        <div class="div1">
-            <p> Test App</p>
-        </div>
-
-        <div class="div2">
-            <form action="start" method="post">
-                <div>
-                    <button type="submit" name="command" value="log_out">
-                        Log out
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <%@ include file="../header.jsp" %>
 </header>
 
 <main>
@@ -57,12 +42,16 @@
 
 
             <p>Test names:</p>
+            <c:if test="${testList.isEmpty()}">
+                <c:out value="There is no tests on this theme."/>
+            </c:if>
             <c:forEach var="item" items="${testList}">
                 <form action="start" method="post">
                     <div class="box">
                         <a href="start?test_id=${item.id}&command=look_through_test">
                             Test name: <c:out value="${item.testName}"/></a>
-                        <input type="hidden" ${requestScope.put("currentTest", item)}>
+                        <c:set var="currentTest" value="${item}"
+                               scope="session"/>
 
                         <div>
                             <button type="submit" name="command"

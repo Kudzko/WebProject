@@ -8,6 +8,8 @@ import by.epam.javawebtraining.dao.exception.DAOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class AbstractDAO<T extends IDdefinition, PK extends
         Long>
@@ -17,8 +19,12 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
     protected  Connection connection;
     protected FactoryDAO parantFactory = FactoryDAO.getInstance();
     private FactoryDAO factoryDAO;// to convert data to object
-    //  private Set<ManyToOne> relations;
 
+    private Lock daoLock = new ReentrantLock(); //to prevent setting of
+    // connection by two different threads simultaneously
+
+
+    //  private Set<ManyToOne> relations;
 //    {
 //        relations = new HashSet<>();
 //    }
@@ -113,24 +119,34 @@ public abstract class AbstractDAO<T extends IDdefinition, PK extends
         }
     }
 
+    /**
+     * Return link on connection which contains DAO
+     * @return
+     */
     public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Set connection into DAO object and locks DAO
+     * @return
+     */
     public void setConnection(Connection connection) {
         this.connection = connection;
+        daoLock.lock();
     }
 
-    public Connection relizeConnectionFromDAO() {
+    /**
+     * extract connection from dao and release DAO
+     * @return
+     */
+    public Connection releaseConnectionFromDAO() {
         Connection connection = getConnection();
         this.connection = null;
+        daoLock.unlock();
         return connection;
     }
 
-//    @Override
-//    public T create() throws DAOException {
-//        return null;
-//    }
 
     @Override
     public T persist(T entity) throws DAOException {

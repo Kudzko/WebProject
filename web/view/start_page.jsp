@@ -13,7 +13,7 @@
     </script>
 --%>
     <style>
-        <%@include file="/view/start_page.css"%>
+        <%@include file="/view/cssstyle/start_page.css"%>
     </style>
 </head>
 <body>

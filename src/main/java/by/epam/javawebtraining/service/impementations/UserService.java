@@ -7,7 +7,6 @@ import by.epam.javawebtraining.dao.FactoryDAO;
 import by.epam.javawebtraining.dao.entity.UserDAO;
 import by.epam.javawebtraining.dao.exception.DAOException;
 import by.epam.javawebtraining.service.AbstractService;
-import by.epam.javawebtraining.service.validation.InputTextValidator;
 
 
 import java.sql.Connection;
@@ -27,10 +26,10 @@ public class UserService extends AbstractService {
                 && (password != null && password.length() > 0)) {
             login = login.trim();
             password = password.trim();
-            UserDAO userDAO;
+            UserDAO userDAO = null;
             User user = null;
 
-            Connection connection = ConnectionPool.getInstance().getConnection();
+            Connection connection = connectionPool.getConnection();
 
             try {
                 userDAO = (UserDAO) factoryDAO.getDAO(UserDAO.class);
@@ -38,6 +37,10 @@ public class UserService extends AbstractService {
                 user = userDAO.getUserByLogin(login);
             } catch (DAOException e) {
                 e.printStackTrace();
+            }finally {
+                if (userDAO != null){
+                    connectionPool.returnConnection( userDAO.releaseConnectionFromDAO());
+                }
             }
 
             if (user.getId() > 0) {
@@ -53,7 +56,7 @@ public class UserService extends AbstractService {
 
     public Role getRole(String login) {
         FactoryDAO factoryDAO = FactoryDAO.getInstance();
-        UserDAO userDAO;
+        UserDAO userDAO = null;
         User user = null;
         Connection connection = ConnectionPool.getInstance().getConnection();
 
@@ -63,6 +66,10 @@ public class UserService extends AbstractService {
             user = userDAO.getUserByLogin(login);
         } catch (DAOException e) {
             e.printStackTrace();
+        }finally {
+            if (userDAO != null){
+                connectionPool.returnConnection( userDAO.releaseConnectionFromDAO());
+            }
         }
 
         return user.getRole();
@@ -84,7 +91,7 @@ public class UserService extends AbstractService {
             surname = surname.trim();
 
             FactoryDAO factoryDAO = FactoryDAO.getInstance();
-            UserDAO userDAO;
+            UserDAO userDAO = null;
             User user = null;
 
             Connection connection = ConnectionPool.getInstance().getConnection();
@@ -101,6 +108,10 @@ public class UserService extends AbstractService {
                 }
             } catch (DAOException e) {
                 e.printStackTrace();
+            }finally {
+                if (userDAO != null){
+                    connectionPool.returnConnection( userDAO.releaseConnectionFromDAO());
+                }
             }
         }
         return result;
@@ -119,7 +130,7 @@ public class UserService extends AbstractService {
             } catch (DAOException e) {
                 e.printStackTrace();
             }finally {
-              connectionPool.returnConnection(userDAO.relizeConnectionFromDAO());
+              connectionPool.returnConnection(userDAO.releaseConnectionFromDAO());
             }
         }
         return user;

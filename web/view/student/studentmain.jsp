@@ -6,29 +6,13 @@
     <meta charset="UTF-8">
     <%--<link rel="stylesheet" type="text/css" href="template_page.css">--%>
     <style>
-        <%@include file = "/view/template_page.css"%>
+        <%@include file = "/view/cssstyle/template_page.css"%>
     </style>
     <title>Student</title>
 </head>
 <body>
 <header>
-    <div class="container">
-
-        <div class="div1">
-            <p> Test App</p>
-        </div>
-
-        <div class="div2">
-            <form action="start" method="post">
-                <div>
-                    <button type="submit" name="command" value="log_out">
-                        Log out
-                    </button>
-                </div>
-            </form>
-
-        </div>
-    </div>
+    <%@ include file="../header.jsp" %>
 </header>
 
 <main>

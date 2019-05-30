@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/jsp/signin.css">
     <title>Testing</title>
     <style>
-        <%@include file="/view/signin.css"%>
+        <%@include file="/view/cssstyle/signin.css"%>
     </style>
 </head>
 <body>

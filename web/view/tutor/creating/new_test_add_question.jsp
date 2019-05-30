@@ -6,29 +6,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="template_page.css">
+    <link rel="stylesheet" type="text/css" href="../../cssstyle/template_page.css">
     <title>Tutor</title>
     <style>
-        <%@include file="/view/template_page.css"%>
+        <%@include file="/view/cssstyle/template_page.css"%>
     </style>
 </head>
 <body>
 <header>
-    <div class="container">
-
-        <div class="div1">
-            <p> Test App</p>
-        </div>
-
-        <div class="div2">
-            <div>
-                <button type="submit" name="command" value="log_out">
-                    Log out
-                </button>
-            </div>
-
-        </div>
-    </div>
+    <%@ include file="../../header.jsp" %>
 </header>
 
 <main>
@@ -47,7 +33,9 @@
             Test name:<c:out value="${sessionScope.currentTest.testName}"/>
 
             <p>List of Questions</p>
-
+            <c:if test="${questionlist.isEmpty() || questionlist == null}">
+                <c:out value="There is no questions in this test."/>
+            </c:if>
             <c:forEach var="item" items="${questionlist}">
                 <c:out value="${item.questionText}"
                        default="Empty Test or Something wrong"/>

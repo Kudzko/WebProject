@@ -1,4 +1,4 @@
-package by.epam.javawebtraining.controller.Command.commandimplim;
+package by.epam.javawebtraining.controller.Command.commandimplim.create;
 
 import by.epam.javawebtraining.controller.Command.Command;
 import by.epam.javawebtraining.utils.PageAdressManager;
