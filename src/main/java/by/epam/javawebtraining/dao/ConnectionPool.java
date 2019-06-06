@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConnectionPool {
     private static ConnectionPool instance = new ConnectionPool();
@@ -18,7 +19,7 @@ public class ConnectionPool {
     private final String PASSWORD = DBProperty.PASS_DB;
 
     private int amountConnections;
-    private volatile int counterConnections = 0;
+    private volatile AtomicInteger counterConnections = new AtomicInteger(0);
     private List<Connection> allConnections;
     private BlockingQueue<Connection> connectionQueue;
 
@@ -33,17 +34,22 @@ public class ConnectionPool {
         return instance;
     }
 
+    /**
+     * returns connection
+     * @return
+     */
     public Connection getConnection() {
         Connection connection = null;
-
-        if (counterConnections < amountConnections) {
+        // if connections less then set amount we create ne connection
+        if (counterConnections.intValue() < amountConnections) {
             connection = connectionQueue.poll();
 
             if (connection == null) {
                 connection = createConnection();
             }
 
-        } else {
+        } // if connections more then set amount we get connection from queue
+        else {
             try {
                 connection = connectionQueue.take();
             } catch (InterruptedException e) {
@@ -55,8 +61,9 @@ public class ConnectionPool {
         try {
             if (!connection.isValid(0)){
                 allConnections.remove(connection);
+                counterConnections.decrementAndGet();
                 connection = getConnection();
-                counterConnections--;
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +80,7 @@ public class ConnectionPool {
             connection = DriverManager.getConnection(DB_URL,
                     DB_USER, PASSWORD);
             allConnections.add(connection);
-            counterConnections++;
+            counterConnections.incrementAndGet();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -82,19 +89,17 @@ public class ConnectionPool {
         return connection;
     }
 
-    /*private boolean validateCon (){
-        return
-    }*/
-
+    /**
+     * method returns connection into connection pool
+     * @param connection
+     */
     public void returnConnection(Connection connection) {
         try {
-            //connection.setAutoCommit(true);
+
             connectionQueue.put(connection);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }/* catch (SQLException e) {
-        e.printStackTrace();
-    }*/
+        }
     }
 
 
