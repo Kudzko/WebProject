@@ -18,7 +18,7 @@ public class InputChecker {
     }
 
     /**
-     * Check if input data is digits > 0
+     * Check if input data is digits
      */
     public boolean isNumber(String inputData) {
         boolean result = false;

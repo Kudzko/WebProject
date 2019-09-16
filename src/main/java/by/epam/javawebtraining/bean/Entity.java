@@ -1,7 +1,5 @@
 package by.epam.javawebtraining.bean;
 
-import by.epam.javawebtraining.dao.daointerface.IDdefinition;
-
 public class Entity {
     protected long id;
 

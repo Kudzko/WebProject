@@ -28,8 +28,8 @@ public class Controller extends HttpServlet {
         String page = command.execute(request);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(page);
-        dispatcher.forward(request, response );
-          }
+        dispatcher.forward(request, response);
+    }
 
 //    @Override
 //    public void init() throws ServletException {

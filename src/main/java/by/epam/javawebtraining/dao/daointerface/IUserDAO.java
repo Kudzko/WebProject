@@ -1,5 +1,5 @@
 package by.epam.javawebtraining.dao.daointerface;
 
-public class IUserDAO {
+public interface IUserDAO {
 
 }

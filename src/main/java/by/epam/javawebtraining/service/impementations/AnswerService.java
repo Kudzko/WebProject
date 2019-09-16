@@ -83,6 +83,7 @@ public class AnswerService extends AbstractService {
                 connectionPool.returnConnection(answerDAO.releaseConnectionFromDAO());
             }
         }
+
         return answerList;
     }
 
