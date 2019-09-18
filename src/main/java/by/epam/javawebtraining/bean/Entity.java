@@ -1,6 +1,8 @@
 package by.epam.javawebtraining.bean;
 
-public class Entity {
+import java.io.Serializable;
+
+public class Entity implements Serializable {
     protected long id;
 
     protected Entity() {
