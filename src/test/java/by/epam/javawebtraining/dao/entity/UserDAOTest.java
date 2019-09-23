@@ -49,16 +49,16 @@ public class UserDAOTest {
 
         User tst_user = new User(name, surname, Role.TUTOR, login, password);
         FactoryDAO factoryDAO = FactoryDAO.getInstance();
-        UserDAO userDAO =(UserDAO) factoryDAO.getDAO(UserDAO.class);
+        UserDAO userDAO = (UserDAO) factoryDAO.getDAO(UserDAO.class);
         userDAO.setConnection(connection);
         tst_user = userDAO.persist(tst_user);
 
         String testSQL = "SELECT `id`, `login`, `password`, `role_id`, " +
                 "`name`, " +
                 "`surname` FROM `testingproject`.`user` WHERE " +
-                "login = '"+ login +"'  AND password = '"+ password+ "' AND " +
+                "login = '" + login + "'  AND password = '" + password + "' AND " +
                 "role_id =" +
-                " 1 AND name = '"+ name +"'  AND surname = '"+surname + "' ;";
+                " 1 AND name = '" + name + "'  AND surname = '" + surname + "' ;";
 
 
         User user = new User();
@@ -73,15 +73,15 @@ public class UserDAOTest {
                 user.setPassword(resultSet.getString("password"));
                 user.setName(resultSet.getString("name"));
                 user.setSurname(resultSet.getString("surname"));
-                user.setRole(Role.values()[resultSet.getInt("role_id")-1]);
+                user.setRole(Role.values()[resultSet.getInt("role_id") - 1]);
 
 
             }
 
             String deleteTestSQL = "DELETE FROM `testingproject`.`user` WHERE " +
-                    "login = '"+ login +"'  AND password = '"+ password+ "' AND " +
+                    "login = '" + login + "'  AND password = '" + password + "' AND " +
                     "role_id =" +
-                    " 1 AND name = '"+ name +"'  AND surname = '"+surname + "' ;";
+                    " 1 AND name = '" + name + "'  AND surname = '" + surname + "' ;";
 
             statement.executeUpdate(deleteTestSQL);
 
@@ -95,24 +95,28 @@ public class UserDAOTest {
 
     }
 
+    @Ignore("Disabled for educational reason.")
     @Test
     public void tst_update() {
-
+        fail();
     }
 
+    @Ignore("Disabled for educational reason.")
     @Test
     public void tst_delete() {
-
+        fail();
     }
 
+    @Ignore("Disabled for educational reason.")
     @Test
     public void tst_getUserByLogin() {
-
+        fail();
     }
 
+    @Ignore("Disabled for educational reason.")
     @Test
     public void tst_getAllUsers() {
-
+        fail();
     }
 
 }
